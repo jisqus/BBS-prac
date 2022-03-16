@@ -14,13 +14,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width", initial-scale="1">
-<link rel="stylesheet" href="css/bootstrap.css">
 <title>JSP 게시판 웹 사이트</title>
 </head>
 <body>
-	<%	
-		if(user.getUserID() == null || user.getUserPassword() == null || user.getUserName() == null
-			|| user.getUserGender() == null || user.getUserEmail() == null){
+	<%
+		String userID = null;
+		if(session.getAttribute("userID") != null){
+			userID = (String) session.getAttribute("userID");
+		}
+		if(userID != null){
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('이미 로그인이 되어있습니다.')");
+			script.println("location.href = main.jsp");
+			script.println("</script>");
+		}
+		if (user.getUserID() == null || user.getUserPassword() == null || user.getUserName() == null
+				|| user.getUserGender() == null || user.getUserEmail() == null) {
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("alert('모든 항목을 입력해주세요.')");
@@ -29,14 +39,14 @@
 		} else {
 			UserDAO userDAO = new UserDAO();
 			int result = userDAO.join(user);
-			if(result == -1){
+			if (result == -1) {
 				PrintWriter script = response.getWriter();
 				script.println("<script>");
 				script.println("alert('이미 존재하는 아이디입니다.')");
 				script.println("hitory.back()");
 				script.println("</script>");
-			}
-			else {
+			} else {
+				session.setAttribute("userID", user.getUserID());
 				PrintWriter script = response.getWriter();
 				script.println("<script>");
 				script.println("location.href = 'main.jsp'");
